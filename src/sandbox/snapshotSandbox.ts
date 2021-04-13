@@ -2,9 +2,10 @@
  * @author Hydrogen
  * @since 2020-3-8
  */
-import { SandBox, SandBoxType } from '../interfaces';
+import type { SandBox } from '../interfaces';
+import { SandBoxType } from '../interfaces';
 
-function iter(obj: object, callbackFn: (prop: any) => void) {
+function iter(obj: typeof window, callbackFn: (prop: any) => void) {
   // eslint-disable-next-line guard-for-in, no-restricted-syntax
   for (const prop in obj) {
     if (obj.hasOwnProperty(prop)) {
@@ -38,7 +39,7 @@ export default class SnapshotSandbox implements SandBox {
   active() {
     // 记录当前快照
     this.windowSnapshot = {} as Window;
-    iter(window, prop => {
+    iter(window, (prop) => {
       this.windowSnapshot[prop] = window[prop];
     });
 
@@ -53,7 +54,7 @@ export default class SnapshotSandbox implements SandBox {
   inactive() {
     this.modifyPropsMap = {};
 
-    iter(window, prop => {
+    iter(window, (prop) => {
       if (window[prop] !== this.windowSnapshot[prop]) {
         // 记录变更，恢复环境
         this.modifyPropsMap[prop] = window[prop];
